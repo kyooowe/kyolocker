@@ -13,6 +13,10 @@ export type ContextWithPrisma = {
 
 const app = new Hono<ContextWithPrisma>(); 
 
+app.get('/', (c) => {
+  return c.text("KyoLocker API")
+})
+
 app.use(
     '*',
     cors({
