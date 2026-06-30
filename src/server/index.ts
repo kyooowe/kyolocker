@@ -35,3 +35,5 @@ app.route("api/password", passwordRouter)
 // })
 
 // console.log('Hono server running on http://localhost:3002 🚀🚀')
+
+export default app;
