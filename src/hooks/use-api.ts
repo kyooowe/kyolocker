@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.VITE_API_URL
+// In production the API is served same-origin under /api (see vercel.json).
+// Locally, VITE_API_URL is read from .env.development.local.
+const API_URL = import.meta.env.VITE_API_URL ?? "/api/"
 
 export const useApi = {
 	get: async <T>(path: string, pin: string): Promise<T> => {
