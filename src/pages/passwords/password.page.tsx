@@ -52,10 +52,11 @@ const PasswordPage = () => {
 	useEffect(() => {
 		(async () => {
 			if (isOpen) return
+			if (!cookies) return
 
 			await handleData();
 		})();
-	}, [handleData, isOpen]);
+	}, [handleData, isOpen, cookies]);
 
 	const handleType = (typeName: string) => {
 		if (typeName.toLocaleLowerCase() === "socialmedia") return "Social Media"

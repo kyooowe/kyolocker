@@ -4,6 +4,7 @@ const API_URL = import.meta.env.VITE_API_URL ?? "/api/"
 
 export const useApi = {
 	get: async <T>(path: string, pin: string): Promise<T> => {
+		console.log(pin)
 		const res = await fetch(`${API_URL}${path}`, {
 			headers: {
 				"Content-Type": "application/json",
