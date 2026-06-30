@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { serve } from '@hono/node-server'
+// import { serve } from '@hono/node-server'
 import { cors } from 'hono/cors'
 import type { PrismaClient } from './generated/prisma/client.js';
 import { passwordRouter } from './routes/password.routes.js';
