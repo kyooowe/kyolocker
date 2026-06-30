@@ -1,5 +1,5 @@
-import type { Prisma, PrismaClient } from "../generated/prisma/client"
-import { encrypt } from "../helper/crypto.helper"
+import type { Prisma, PrismaClient } from "../generated/prisma/client.js"
+import { encrypt } from "../helper/crypto.helper.js"
 
 export const passwordService = {
 

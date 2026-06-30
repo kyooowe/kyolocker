@@ -1,5 +1,5 @@
 import { createMiddleware } from "hono/factory";
-import { decryptHeaders } from "./crypto.helper";
+import { decryptHeaders } from "./crypto.helper.js";
 
 export const auth = createMiddleware(async (c, next) => {
     const secret = c.req.header("X-secret");

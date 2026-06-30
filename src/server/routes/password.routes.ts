@@ -1,8 +1,8 @@
 import { Hono } from "hono";
-import withPrisma from "../lib/prisma";
-import type { ContextWithPrisma } from "..";
-import { passwordService } from "../service/password.service";
-import { auth } from "../helper/auth.helper";
+import withPrisma from "../lib/prisma.js";
+import type { ContextWithPrisma } from "../index.js";
+import { passwordService } from "../service/password.service.js";
+import { auth } from "../helper/auth.helper.js";
 
 export const passwordRouter = new Hono<ContextWithPrisma>();
 
