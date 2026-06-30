@@ -24,10 +24,10 @@ app.use(
 
 app.route("api/password", passwordRouter)
 
-serve({
-    fetch: app.fetch,
-    port: 3002,
-    hostname: '0.0.0.0',
-})
+// serve({
+//     fetch: app.fetch,
+//     port: 3002,
+//     hostname: '0.0.0.0',
+// })
 
-console.log('Hono server running on http://localhost:3002 🚀🚀')
+// console.log('Hono server running on http://localhost:3002 🚀🚀')
