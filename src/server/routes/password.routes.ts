@@ -16,6 +16,14 @@ passwordRouter.post("/", withPrisma, async (c) => {
     return c.json(data)
 });
 
+passwordRouter.put("/", withPrisma, async (c) => {
+    const prisma = c.get("prisma"); 
+    const body = await c.req.json();
+    
+    const data = await passwordService.updatePassword(prisma, body)
+    return c.json(data)
+});
+
 passwordRouter.get("/", withPrisma, async (c) => {
     const prisma = c.get("prisma"); 
     

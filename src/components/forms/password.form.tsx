@@ -17,6 +17,8 @@ import { DrawerClose, DrawerFooter } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/hooks/use-api"
 import { useCookies } from "react-cookie"
+import { useUser } from "@/hooks/use-user"
+import { useCrypto } from "@/hooks/use-crypto"
 
 const formSchema = z.object({
 	email: z.string()
@@ -37,39 +39,49 @@ const formSchema = z.object({
 
 type Props = {
 	onRefresh: () => void;
+	intialData?: IPasswordFormSchemaWithId | null;
 };
 
-const PasswordForm = ({ onRefresh }: Props) => {
+const PasswordForm = ({ onRefresh, intialData }: Props) => {
 
-	const { post } = useApi;
+	const { post, put } = useApi;
 	const [cookies] = useCookies(["session"])
-
+	const { getUser } = useUser()
+	const { decrypt } = useCrypto
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			email: "",
-			password: "",
-			webName: "",
-			webUrl: "",
-			webType: "socialMedia",
-			user: "poto"
+			email: intialData === null ? "" : intialData?.email,
+			password: intialData === null ? "" : decrypt(intialData?.password as string),
+			webName: intialData === null ? "" : intialData?.webName,
+			webUrl: intialData === null ? "" : intialData?.webUrl,
+			webType: intialData === null ? "socialMedia" : intialData?.webType,
+			user: intialData === null ? getUser() : intialData?.user
 		}
 	})
 
 	const onSubmit = async (data: z.infer<typeof formSchema>) => {
+
+		const isUpdate = intialData === null ? false : true
+
 		const obj = {
+			id: isUpdate ? intialData?.id : undefined,
 			email: data.email,
 			password: data.password,
 			webName: data.webName,
 			webUrl: data.webUrl,
 			webType: data.webType,
-			user: "Poto"
+			user: getUser()
 		}
 
+		if(isUpdate)
+			await put("password", obj, cookies.session)
+
 		await post("password", obj, cookies.session)
+
 		onRefresh()
-		toast.success(`Credentials for $a{data.webName} has been created.`)
+		toast.success(`Credentials for ${data.webName} has been ${isUpdate ? "updated" : "created"}.`)
 	}
 
 	return (
@@ -178,15 +190,20 @@ const PasswordForm = ({ onRefresh }: Props) => {
 								<Controller
 									name="webType"
 									control={form.control}
-									render={() => (
+									render={({ field }) => (
 										<Field>
 											<FieldLabel htmlFor="type">
 												Password Type
 											</FieldLabel>
-											<Select defaultValue="socialMedia">
+
+											<Select
+												value={field.value}
+												onValueChange={field.onChange}
+											>
 												<SelectTrigger id="type">
 													<SelectValue placeholder="Select Type" />
 												</SelectTrigger>
+
 												<SelectContent>
 													<SelectGroup>
 														<SelectItem value="socialMedia">Social Media</SelectItem>
@@ -199,8 +216,7 @@ const PasswordForm = ({ onRefresh }: Props) => {
 											</Select>
 										</Field>
 									)}
-								>
-								</Controller>
+								/>
 
 								<Controller
 									name="user"
@@ -210,15 +226,15 @@ const PasswordForm = ({ onRefresh }: Props) => {
 											<FieldLabel htmlFor="user">
 												User
 											</FieldLabel>
-											<Select defaultValue="poto">
+											<Select defaultValue={getUser()} disabled>
 												<SelectTrigger id="user">
 													<SelectValue placeholder="Select User" />
 												</SelectTrigger>
 												<SelectContent>
 													<SelectGroup>
-														<SelectItem value="poto">Poto Pogi</SelectItem>
-														<SelectItem value="kyooowe">Kyooowe Super Pogi</SelectItem>
-														<SelectItem value="tonet">Tonet</SelectItem>
+														<SelectItem value="Poto">Poto Pogi</SelectItem>
+														<SelectItem value="Kyooowe">Kyooowe Super Pogi</SelectItem>
+														<SelectItem value="Tonet">Tonet</SelectItem>
 													</SelectGroup>
 												</SelectContent>
 											</Select>
@@ -226,6 +242,7 @@ const PasswordForm = ({ onRefresh }: Props) => {
 									)}
 								>
 								</Controller>
+
 							</div>
 						</FieldGroup>
 					</FieldSet>
@@ -245,5 +262,9 @@ export type IPasswordFormSchema =
 	z.infer<typeof formSchema> & {
 		id: number;
 		isVisible: boolean;
+	};
+export type IPasswordFormSchemaWithId =
+	z.infer<typeof formSchema> & {
+		id: number;
 	};
 export default PasswordForm;

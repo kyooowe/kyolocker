@@ -34,6 +34,39 @@ export const passwordService = {
         }
     },
 
+    async updatePassword(
+        prisma: PrismaClient,
+        data: Prisma.PasswordUncheckedCreateInput
+    ) {
+        try {
+            data.dateModified = new Date();
+            const id = data.id
+
+            console.log(data)
+
+            const password = await prisma.password.update({
+                where: {
+                    id,
+                },
+                data,
+            });
+
+            return {
+                success: true,
+                data: password,
+            };
+        } catch (error: unknown) {
+            const message =
+                error instanceof Error ? error.message : "Unknown error occurred";
+
+            return {
+                success: false,
+                data: null,
+                message,
+            };
+        }
+    },
+
     async getPasswords(prisma: PrismaClient) {
         try {
             const data = await prisma.password.findMany()
